@@ -132,6 +132,7 @@ The server will start on port 8080 and will be ready to receive requests.
 ## ALIASES
 
 The following aliases (c, p, pc) are used to abbreviate table names in queries and make them easier to reference. 
+
 The field names (name_cat, idproduct, idcategory) refer to specific fields in the tables that are being selected or used for joining tables.
 
 Table names: ("product", "productCat", "category")

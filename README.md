@@ -124,8 +124,6 @@ To start the server, run the following command in the terminal:
 
 The server will start on port 8080 and will be ready to receive requests.
 
-# express-mysql
-
 ## TYPOGRAPHICAL STYLES
 
 - Controllers -> PascalCase

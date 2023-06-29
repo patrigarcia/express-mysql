@@ -4,8 +4,6 @@ const app = express();
 const mysql = require("mysql2");
 const port = 8080;
 
-//PATRIIIII COPIA ESTO: " npm i "
-
 // Agregamos Middlewares
 app.use(express.json());
 
@@ -20,7 +18,7 @@ app.get("/", (req, res) => {
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "colombia10",
+    password: "sm080197",
     database: "e-commerce",
 });
 
@@ -124,7 +122,112 @@ app.put("/categories/:id", (req, res) => {
         res.status(200).json({ message: "La categoría se actualizó" });
     });
 });
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Ejercicio 3 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-//
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Ejercicio 4 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-//
+
+// Endpoint que muestra todos los productos
+app.get("/products", (req, res) => {
+    const sql = "SELECT * FROM product";
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
+
+// Endpoint que muestra todas las categorias
+app.get("/categories", (req, res) => {
+    const sql = "SELECT * FROM category";
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
+// Endpoint para mostrar todos los productos con sus categorías
+app.get("/products-with-categories", (req, res) => {
+    
+    const sql = `
+      SELECT p.*, c.name_cat
+      FROM product p
+      INNER JOIN productCat pc ON p.idproduct = pc.product_id
+      INNER JOIN category c ON pc.category_id = c.idcategory
+    `;
+    db.query(sql, (err, results) => {
+      if (err) throw err;
+      
+        // Mensajito confirm
+        res.json(results);
+    });
+  });
+
+// Endpoint para mostrar todos los productos con sus categorías
+app.get("/products/:id", (req, res) => {
+  const productId = req.params.id;
+
+  const sql = "SELECT * FROM product WHERE idproduct = ?";
+  db.query(sql, [productId], (err, result) => {
+    if (err) throw err;
+
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.status(404).json({ message: "El producto no existe" });
+    }
+  });
+});
+
+//Endpoint para mostrar una categoría por su id
+app.get("/categories/:id", (req, res) => {
+    const categoryId = req.params.id;
+  
+    const sql = "SELECT * FROM category WHERE idcategory = ?";
+    db.query(sql, [categoryId], (err, results) => {
+      if (err) throw err;
+      res.json(results);
+    });
+  });
+  
+  //Endpoint para buscar un producto por su nombre
+  app.get("/products/search", (req, res) => {
+    const productName = req.query.name;
+  
+    const sql = "SELECT * FROM product WHERE name LIKE ?";
+    db.query(sql, [`%${productName}%`], (err, results) => {
+      if (err) throw err;
+      res.json(results);
+    });
+  });
+  
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Ejercicio 5 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-//
+
+// Endpoints para borrar por id 
+app.delete("/products/:id", (req, res) => {
+    const productId = req.params.id;
+  
+    const sql = "DELETE FROM product WHERE idproduct = ?";
+    db.query(sql, [productId], (err, result) => {
+      if (err) throw err;
+      console.log("Producto eliminado:", result);
+  
+      // Mensajito de confirmación
+      res.status(200).json({ message: "Producto eliminado" });
+    });
+  });
+
+app.delete("/categories/:id", (req, res) => {
+    const categoryId = req.params.id;
+  
+    const sql = "DELETE FROM category WHERE idcategory = ?";
+    db.query(sql, [categoryId], (err, result) => {
+      if (err) throw err;
+      console.log("Categoría eliminada:", result);
+  
+      // Mensajito de confirmación
+      res.status(200).json({ message: "Categoría eliminada" });
+    });
+  });
+  
+
 
 // Iniciar el servidor
 app.listen(port, () => {

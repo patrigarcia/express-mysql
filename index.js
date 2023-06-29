@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "sm080197",
+    password: "1234",
     database: "e-commerce",
 });
 
@@ -133,7 +133,6 @@ app.get("/products", (req, res) => {
     });
 });
 
-
 // Endpoint que muestra todas las categorias
 app.get("/categories", (req, res) => {
     const sql = "SELECT * FROM category";
@@ -145,7 +144,6 @@ app.get("/categories", (req, res) => {
 
 // Endpoint para mostrar todos los productos con sus categorías
 app.get("/products-with-categories", (req, res) => {
-    
     const sql = `
       SELECT p.*, c.name_cat
       FROM product p
@@ -153,81 +151,79 @@ app.get("/products-with-categories", (req, res) => {
       INNER JOIN category c ON pc.category_id = c.idcategory
     `;
     db.query(sql, (err, results) => {
-      if (err) throw err;
-      
+        if (err) throw err;
+
         // Mensajito confirm
         res.json(results);
     });
-  });
+});
 
 // Endpoint para mostrar todos los productos con sus categorías
 app.get("/products/:id", (req, res) => {
-  const productId = req.params.id;
+    const productId = req.params.id;
 
-  const sql = "SELECT * FROM product WHERE idproduct = ?";
-  db.query(sql, [productId], (err, result) => {
-    if (err) throw err;
+    const sql = "SELECT * FROM product WHERE idproduct = ?";
+    db.query(sql, [productId], (err, result) => {
+        if (err) throw err;
 
-    if (result.length > 0) {
-      res.json(result[0]);
-    } else {
-      res.status(404).json({ message: "El producto no existe" });
-    }
-  });
+        if (result.length > 0) {
+            res.json(result[0]);
+        } else {
+            res.status(404).json({ message: "El producto no existe" });
+        }
+    });
 });
 
 //Endpoint para mostrar una categoría por su id
 app.get("/categories/:id", (req, res) => {
     const categoryId = req.params.id;
-  
+
     const sql = "SELECT * FROM category WHERE idcategory = ?";
     db.query(sql, [categoryId], (err, results) => {
-      if (err) throw err;
-      res.json(results);
+        if (err) throw err;
+        res.json(results);
     });
-  });
-  
-  //Endpoint para buscar un producto por su nombre
-  app.get("/products/search", (req, res) => {
+});
+
+//Endpoint para buscar un producto por su nombre
+app.get("/products/search", (req, res) => {
     const productName = req.query.name;
-  
+
     const sql = "SELECT * FROM product WHERE name LIKE ?";
     db.query(sql, [`%${productName}%`], (err, results) => {
-      if (err) throw err;
-      res.json(results);
+        if (err) throw err;
+        res.json(results);
     });
-  });
-  
+});
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Ejercicio 5 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-//
 
-// Endpoints para borrar por id 
+// Endpoints para borrar por id
 app.delete("/products/:id", (req, res) => {
     const productId = req.params.id;
-  
+
     const sql = "DELETE FROM product WHERE idproduct = ?";
     db.query(sql, [productId], (err, result) => {
-      if (err) throw err;
-      console.log("Producto eliminado:", result);
-  
-      // Mensajito de confirmación
-      res.status(200).json({ message: "Producto eliminado" });
+        if (err) throw err;
+        console.log("Producto eliminado:", result);
+
+        // Mensajito de confirmación
+        res.status(200).json({ message: "Producto eliminado" });
     });
-  });
+});
 
 app.delete("/categories/:id", (req, res) => {
     const categoryId = req.params.id;
-  
+
     const sql = "DELETE FROM category WHERE idcategory = ?";
     db.query(sql, [categoryId], (err, result) => {
-      if (err) throw err;
-      console.log("Categoría eliminada:", result);
-  
-      // Mensajito de confirmación
-      res.status(200).json({ message: "Categoría eliminada" });
-    });
-  });
-  
+        if (err) throw err;
+        console.log("Categoría eliminada:", result);
 
+        // Mensajito de confirmación
+        res.status(200).json({ message: "Categoría eliminada" });
+    });
+});
 
 // Iniciar el servidor
 app.listen(port, () => {
